@@ -1,0 +1,11 @@
+<th:block th:fragment="top">
+	<!DOCTYPE html>
+	<html xmlns:th="http://www.thymeleaf.org">
+
+	<head th:replace="fragmentos/head :: cabecera"></head>
+
+	<body>
+		<div class="main-shell">
+			<div class="main-card">
+				<div th:replace="fragmentos/nav :: navbar"></div>
+</th:block>

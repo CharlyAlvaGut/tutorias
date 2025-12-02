@@ -12,4 +12,9 @@ public class jcHome {
 	public String mostrarHome() {
 		return "home";
 	}
+	
+	@GetMapping("/login")
+	public String mostrarLogin() {
+		return "login";
+	}
 }
