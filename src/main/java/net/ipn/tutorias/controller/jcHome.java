@@ -17,4 +17,10 @@ public class jcHome {
 	public String mostrarLogin() {
 		return "login";
 	}
+	
+	@GetMapping("/registro")
+	public String mostrarRegistro() {
+		return "signin";
+	}
+	
 }
