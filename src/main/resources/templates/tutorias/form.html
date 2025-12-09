@@ -1,0 +1,48 @@
+<div th:replace="fragmentos/top :: top"></div>
+
+<section class="hero" id="inicio">
+	<h1>Registrar nueva tutoria</h1>
+	<p>
+		En este espacio podras registrar una nueva clase, es necesario que registres todos los campos necesarios.
+	</p>
+	<br>
+
+	<form th:action="@{/tutorias/save}" method="post" th:object="${clase}">
+		<div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
+			Por favor, corrija los siguientes errores
+			<ul>
+				<li th:each="err:${#fields.errors('*')}" th:text="${err}"></li>
+			</ul>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<label for="titulo" class="">Titulo del curso</label>
+				<input type="text" class="form-control" name="titulo" id="titulo"  th:field="*{titulo}" placeholder="Coloca el titulo del curso aquí">
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-12">
+				<label for="descripcion" class="">Descripción del curso</label>
+				<textarea class="form-control col-12" name="descripcion" id="descripcion" th:field="*{descripcion}" rows="7"></textarea>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<button type="submit" class="btn btn-success">Guardar</button>			
+		</div>
+	</form>
+
+</section>
+
+<script>
+	tinymce.init({
+		selector: '#descripcion',
+		plugins: "textcolor, table lists code",
+		toolbar: " undo redo | bold italic | alignleft aligncenter alignright alignjustify \n\
+	    | bullist numlist outdent indent | forecolor backcolor table code"
+	});
+</script>
+
+<div class="gradient-band"></div>
+<div th:replace="fragmentos/bottom :: bottom"></div>
