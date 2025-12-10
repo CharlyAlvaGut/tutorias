@@ -7,7 +7,46 @@
 		académico personalizado, resolver dudas en tiempo real y reforzar tus conocimientos en diversas materias, todo
 		dentro de una plataforma fácil de usar y orientada al aprendizaje colaborativo.
 	</p>
+	<br>
+	<div class="col-12">
+		<a class="btn btn-success" th:href="@{/tutorias/form}">Crear nueva clase</a>
+	</div>
+	<br>
+	
+	<div th:if="${mensaje != null}" class="alert alert-success" role="alert" th:text="${mensaje}"></div>
+	
+	<div class="row row-cols-1 row-cols-md-3 g-4">
+		<div class="col" th:each="clase : ${clases}">
+			<div class="card h-100">
+				<div class="card-body">
+					<h5 class="card-title" th:text="${clase.titulo}"></h5>
+					<p class="card-text" th:utext="${clase.descripcion}"></p>
+
+					<!-- Botones o acciones -->
+					<a th:href="@{/vacantes/edit/{id}(id=${clase.id})}" 
+					   class="btn btn-warning btn-sm">Editar</a>
+
+					<a th:href="@{/vacantes/delete/{id}(id=${clase.id})}"
+					   onclick="return confirm('¿Estas seguro?')"
+					   class="btn btn-danger btn-sm">Eliminar</a>
+				</div>
+
+				<div class="card-footer">
+					<small class="text-muted">
+						Fecha de creación:
+						<span th:text="${#dates.format(clase.fecha, 'dd/MM/yyyy')}"></span>
+						<br>
+						Creado por:
+						<span th:text="${clase.idUsuario}"></span>
+					</small>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	
 </section>
+
 
 <div class="gradient-band"></div>
 <div th:replace="fragmentos/bottom :: bottom"></div>

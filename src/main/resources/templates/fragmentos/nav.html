@@ -5,14 +5,15 @@
 
 
 	<nav class="nav-links">
-		<a th:href="@{/tutorias/}">Tutorías</a>
-		<a th:href="@{/tutorias/alumnos}">Alumnos</a>
-		<a th:href="@{/tutorias/tutores}">Tutores</a>
-		<a th:href="@{/flowdocs/}">FlowDocs</a>
+		<a sec:authorize="isAuthenticated()" th:href="@{/tutorias/}">Tutorías</a>
+		<a sec:authorize="isAuthenticated()" th:href="@{/tutorias/alumnos}">Alumnos</a>
+		<a sec:authorize="isAuthenticated()" th:href="@{/tutorias/tutores}">Tutores</a>
+		<a sec:authorize="isAuthenticated()" th:href="@{/flowdocs/}">FlowDocs</a>
 	</nav>
 
 	<div class="nav-actions">
-		<a class="btn-pill" th:href="@{/registro}">Registrarse</a>
-		<a class="btn-ghost" th:href="@{/login}">Iniciar sesión</a>
+		<a sec:authorize="isAnonymous()" class="btn-pill" th:href="@{/registro}">Registrarse</a>
+		<a sec:authorize="isAnonymous()" class="btn-ghost" th:href="@{/login}">Iniciar sesión</a>
+		<a  sec:authorize="isAuthenticated()" class="btn-pill" th:href="@{/logout}">Cerrar Sesión</a>
 	</div>
 </header>

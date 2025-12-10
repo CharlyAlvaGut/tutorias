@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Iniciar Sesión - AulaX</title>
+	<title>Registro - AulaX</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" th:href="@{/assets/css/styles.css}">
@@ -32,24 +32,26 @@
 				</p>
 
 				<div class="form-shell">
-					<form th:action="@{/registro}" method="post" class="form-basic">
+					<form th:action="@{/registro}" th:object="${CUsuario}" method="post" class="form-basic">
 
-						<input type="text" name="nombre" placeholder="Nombre completo" class="input-pill" required>
+						<input th:field="*{nombre}" type="text" placeholder="Nombre(s)" class="input-pill" required>
+						<input th:field="*{apellidop}" type="text" placeholder="Apellido paterno" class="input-pill" required>
+						<input th:field="*{apellidom}" type="text" placeholder="Apellido materno" class="input-pill" required>
 
-						<input type="email" name="correo" placeholder="Correo institucional" class="input-pill"
+						<input th:field="*{correo}" type="email" placeholder="Correo electronico" class="input-pill"
 							required>
 
-						<input type="password" name="password" placeholder="Ingresa una contraseña" class="input-pill"
+						<input th:field="*{password}" type="password" name="password" placeholder="Ingresa una contraseña" class="input-pill"
 							required>
 
 						<input type="password" name="password2" placeholder="Confirma tu contraseña" class="input-pill"
 							required>
 
-						<select name="rol" class="input-pill" required>
+						<select th:field="*{idRol}" name="rol" class="input-pill" required>
 							<option value="" disabled selected>Selecciona un rol</option>
-							<option value="tutorado">Tutorado</option>
-							<option value="tutor">Tutor</option>
-							<option value="admin">Administrador</option>
+							<option value=1>Tutorado</option>
+							<option value=2>Tutor</option>
+							<option value=3>Administrador</option>
 						</select>
 
 						<button type="submit" class="btn-pill submit-btn">
