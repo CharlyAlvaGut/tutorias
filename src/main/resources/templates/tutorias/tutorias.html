@@ -9,28 +9,45 @@
 	</p>
 	<br>
 	<div class="col-12">
-		<a class="btn btn-success" th:href="@{/tutorias/form}">Crear nueva clase</a>
+		<a class="btn btn-dark" th:href="@{/tutorias/form}">Crear nueva clase</a>
 	</div>
 	<br>
-	
+
 	<div th:if="${mensaje != null}" class="alert alert-success" role="alert" th:text="${mensaje}"></div>
-	
+
 	<div class="row row-cols-1 row-cols-md-3 g-4">
 		<div class="col" th:each="clase : ${clases}">
 			<div class="card h-100">
 				<div class="card-body">
 					<h5 class="card-title" th:text="${clase.titulo}"></h5>
-					<p class="card-text" th:utext="${clase.descripcion}"></p>
-					
-					<!-- Botones o acciones -->
-					<a th:href="@{/tutorias/editar/{id}(id=${clase.id})}" 
-					   class="btn btn-warning btn-sm">Editar</a>
+					<p class="card-text" th:utext="${#strings.abbreviate(clase.descripcion, 50)}">
+					</p>
 
-					   <a th:href="@{/tutorias/eliminar/{id}(id=${clase.id})}"
-					      onclick="return confirm('¿Estas seguro?')"
-					      class="btn btn-danger btn-sm">
-					       Eliminar
-					   </a>
+					<br>
+
+					<!-- Botones o acciones 
+					<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor', 'Alumno')" data-bs-toggle="modal"
+						data-bs-target="#exampleModal" title="Ver detalle de la tutoria"
+						th:href="@{/tutorias/detalle/{id}(id=${clase.id})}" class="btn btn-outline-dark btn-sm">
+						<i class="fa-solid fa-circle-info"></i>
+					</a>
+					-->
+					<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor', 'Alumno')" data-bs-toggle="modal"
+						data-bs-target="#exampleModal" th:data-id="${clase.id}" title="Ver detalle de la tutoría"
+						class="btn btn-outline-dark btn-sm">
+						<i class="fa-solid fa-circle-info"></i>
+					</a>
+
+					<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor')" title="Editar tutoria"
+						th:href="@{/tutorias/editar/{id}(id=${clase.id})}" class="btn btn-outline-dark btn-sm">
+						<i class="fa-solid fa-pen-to-square"></i>
+					</a>
+
+					<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor')" title="Eliminar tutoria"
+						href="javascript:void(0);" th:onclick="'confirmarEliminacion(' + ${clase.id} + ')'"
+						class="btn btn-outline-dark btn-sm">
+						<i class="fa-solid fa-trash"></i>
+					</a>
 
 				</div>
 
@@ -40,16 +57,81 @@
 						<span th:text="${#dates.format(clase.fecha, 'dd/MM/yyyy')}"></span>
 						<br>
 						Creado por:
-						<span th:text="${clase.idUsuario}"></span>
+						<span th:text="${clase.usuario}"></span>
 					</small>
 				</div>
 
 			</div>
 		</div>
 	</div>
-	
+
 </section>
+
+<!-- Modal del detalle de la tutoria -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Detalle de la tutoria</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				...
+				<br>
+				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">¡Quiero inscribirme!</button>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 <div class="gradient-band"></div>
+<script>
+	$(function () {
+
+		$('#exampleModal').on('show.bs.modal', function (event) {
+			const id = $(event.relatedTarget).data('id');
+
+			$.get('/aulax/tutorias/detalle/' + id, function (clase) {
+				$('#modalTitulo').text(clase.titulo);
+				$('#modalDescripcion').html(clase.descripcion);
+				
+				console.log(clase.titulo);
+				console.log(clase.descripcion);
+				
+				
+			});
+		});
+	});
+
+
+	function confirmarEliminacion(id) {
+		Swal.fire({
+			title: '¿Eliminar tutoría?',
+			text: "Esta acción no se puede deshacer",
+			icon: 'warning',
+			iconColor: '#000',
+			background: '#fff',
+			showCancelButton: true,
+			confirmButtonText: 'Sí, eliminar',
+			cancelButtonText: 'Cancelar',
+
+			buttonsStyling: false,
+			customClass: {
+				confirmButton: 'btn btn-dark mx-2',
+				cancelButton: 'btn btn-light border mx-2'
+			}
+
+		}).then((result) => {
+			if (result.isConfirmed) {
+				window.location.href = '/aulax/tutorias/eliminar/' + id;
+			}
+		});
+	}
+
+
+</script>
 <div th:replace="fragmentos/bottom :: bottom"></div>
