@@ -25,13 +25,7 @@
 
 					<br>
 
-					<!-- Botones o acciones 
-					<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor', 'Alumno')" data-bs-toggle="modal"
-						data-bs-target="#exampleModal" title="Ver detalle de la tutoria"
-						th:href="@{/tutorias/detalle/{id}(id=${clase.id})}" class="btn btn-outline-dark btn-sm">
-						<i class="fa-solid fa-circle-info"></i>
-					</a>
-					-->
+					<!-- Botones o acciones -->
 					<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor', 'Alumno')" data-bs-toggle="modal"
 						data-bs-target="#exampleModal" th:data-id="${clase.id}" title="Ver detalle de la tutoría"
 						class="btn btn-outline-dark btn-sm">
@@ -71,41 +65,62 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
+
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Detalle de la tutoria</h5>
+				<h5 class="modal-title" id="modalTitulo">Detalle de la tutoría</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
+
 			<div class="modal-body">
-				...
+				<div id="modalDescripcion"></div>
+
 				<br>
-				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">¡Quiero inscribirme!</button>
+				<div class="text-center">
+					<button sec:authorize="hasAnyAuthority('Administrador', 'Alumno')" type="button"
+						class="btn btn-outline-dark" id="btnInscribirme" th:attr="data-idalumno=${session.usuario.id}">
+						¡Quiero inscribirme!
+					</button>
+					<button sec:authorize="hasAnyAuthority('Administrador', 'Tutor')" type="button"
+						class="btn btn-outline-dark">
+						Iniciar sesión ahora
+					</button>
+				</div>
 			</div>
+
 			<div class="modal-footer">
-				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+					Close
+				</button>
 			</div>
+
 		</div>
 	</div>
 </div>
 
 
+
 <div class="gradient-band"></div>
 <script>
 	$(function () {
-
 		$('#exampleModal').on('show.bs.modal', function (event) {
-			const id = $(event.relatedTarget).data('id');
+			const idClase = $(event.relatedTarget).data('id');
+			$('#btnInscribirme').attr('data-idclase', idClase);
 
-			$.get('/aulax/tutorias/detalle/' + id, function (clase) {
+			$.get('/aulax/tutorias/detalle/' + idClase, function (clase) {
 				$('#modalTitulo').text(clase.titulo);
 				$('#modalDescripcion').html(clase.descripcion);
-				
-				console.log(clase.titulo);
-				console.log(clase.descripcion);
-				
-				
 			});
 		});
+
+		$(document).on('click', '#btnInscribirme', function () {
+			const idClase = $(this).data('idclase');
+			const idAlumno = $(this).data('idalumno');
+
+			confirmarRegistro(idClase, idAlumno);
+		});
+
 	});
+
 
 
 	function confirmarEliminacion(id) {
@@ -131,6 +146,34 @@
 			}
 		});
 	}
+
+
+	function confirmarRegistro(idClase, idAlumno) {
+		Swal.fire({
+			title: '¿Desea inscribirse a la tutoría?',
+			text: "Será agregado al aula",
+			icon: 'warning',
+			iconColor: '#000',
+			background: '#fff',
+			showCancelButton: true,
+			confirmButtonText: 'Sí, inscribirme',
+			cancelButtonText: 'Cancelar',
+
+			buttonsStyling: false,
+			customClass: {
+				confirmButton: 'btn btn-dark mx-2',
+				cancelButton: 'btn btn-light border mx-2'
+			}
+
+		}).then((result) => {
+			if (result.isConfirmed) {
+				window.location.href = '/aulax/tutorias/registro/' + idClase + '/' + idAlumno;
+			}
+		});
+	}
+
+
+
 
 
 </script>

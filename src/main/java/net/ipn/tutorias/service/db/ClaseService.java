@@ -19,6 +19,7 @@ public class ClaseService implements IClaseService {
 
 	@Autowired
 	private IClaseRepository repoClases;
+	
 
 	@Override
 	public List<ClaseDTO> buscarTodos() {

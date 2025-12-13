@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpSession;
 import net.ipn.tutorias.model.CClase;
 import net.ipn.tutorias.model.CUsuario;
 import net.ipn.tutorias.service.IClaseService;
+import net.ipn.tutorias.service.IClaseUsuarioService;
 import net.ipn.tutorias.service.db.UsuarioService;
 
 @Controller
@@ -29,6 +30,9 @@ public class jcTutorias {
 
 	@Autowired
 	private IClaseService serviceClases;
+	
+	@Autowired
+	private IClaseUsuarioService serviceClaseUsuario;
 
 	jcTutorias(UsuarioService usuarioService) {
 		this.usuarioService = usuarioService;
@@ -80,7 +84,7 @@ public class jcTutorias {
 		clase.setEstatus(1);
 
 		serviceClases.guardar(clase);
-		System.out.println(clase);
+
 		return "redirect:/tutorias/";
 
 	}
@@ -89,6 +93,26 @@ public class jcTutorias {
 	@ResponseBody
 	public CClase verTutoria(@PathVariable Integer id) {
 		return serviceClases.obtenerPorId(id);
+	}
+
+	@GetMapping("/registro/{idClase}/{idAlumno}")
+	public String inscribirTutoria(@PathVariable("idClase") int idClase, @PathVariable("idAlumno") int idAlumno,
+			HttpSession session, RedirectAttributes atributos) {
+
+		CUsuario u = (CUsuario) session.getAttribute("usuario");
+		int idAlumnoSesion = u.getId();
+
+		if (idAlumno != idAlumnoSesion) {
+			atributos.addFlashAttribute("mensaje", "Acción no permitida.");
+			return "redirect:/tutorias/";
+		}
+
+		boolean inscrito = serviceClaseUsuario.inscribir(idClase, idAlumnoSesion);
+
+		atributos.addFlashAttribute("mensaje",
+				inscrito ? "¡Se registró correctamente!" : "Ya estabas inscrito en esta tutoría.");
+
+		return "redirect:/tutorias/";
 	}
 
 	@GetMapping("/eliminar/{id}")
