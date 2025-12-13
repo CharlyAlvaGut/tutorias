@@ -9,8 +9,9 @@
 
 	<nav class="nav-links">
 		<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor', 'Alumno')" th:href="@{/tutorias/}">Tutorías</a>
-		<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor')" th:href="@{/tutorias/alumnos}">Alumnos</a>
-		<a sec:authorize="hasAnyAuthority('Administrador','Alumno')" th:href="@{/tutorias/tutores}">Tutores</a>
+		<!-- a sec:authorize="hasAnyAuthority('Administrador', 'Tutor')" th:href="@{/tutorias/alumnos}">Alumnos</a-->
+		<!-- a sec:authorize="hasAnyAuthority('Administrador','Alumno')" th:href="@{/tutorias/tutores}">Tutores</a-->
+		<a sec:authorize="hasAnyAuthority('Administrador','Alumno')" th:href="@{/tutorias/misclases}">Mis clases</a>
 		<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor', 'Alumno')" th:href="@{/flowdocs/}">FlowDocs</a>
 	</nav>
 

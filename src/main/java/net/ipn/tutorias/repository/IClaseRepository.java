@@ -4,21 +4,37 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import net.ipn.tutorias.model.CClase;
 
 public interface IClaseRepository extends JpaRepository<CClase, Integer> {
 
 	@Query(value = """
 				    SELECT
-				        c.id,
-				        c.titulo,
-				        c.descripcion,
-				        CONCAT(u.nombre, ' ', u.apellidop, ' ', u.apellidom) AS usuario,
-				        c.fecha
-				    FROM clases c
-				    JOIN usuarios u ON c.idUsuario = u.id
-				    WHERE c.estatus = 1
+				        a.id,
+				        a.titulo,
+				        a.descripcion,
+				        CONCAT(b.nombre, ' ', b.apellidop, ' ', b.apellidom) AS usuario,
+				        a.fecha
+				    FROM clases a
+				    JOIN usuarios b ON a.idUsuario = b.id
+				    WHERE a.estatus = 1
 			""", nativeQuery = true)
 	List<Object[]> obtenerClases();
+
+	@Query(value = """
+		    SELECT
+		        a.id,
+		        a.titulo,
+		        a.descripcion,
+		        CONCAT(b.nombre, ' ', b.apellidop, ' ', b.apellidom) AS usuario,
+		        a.fecha
+			FROM clases a
+			INNER JOIN usuarios b ON a.idUsuario = b.id
+			INNER JOIN claseusuarios c ON a.id = c.idClase
+			WHERE c.idUsuario = :idUser
+							""", nativeQuery = true)
+	List<Object[]> obtenerClasesPorUsuario(@Param("idUser") Integer user);
 
 }

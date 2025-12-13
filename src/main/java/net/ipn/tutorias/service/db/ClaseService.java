@@ -19,18 +19,14 @@ public class ClaseService implements IClaseService {
 
 	@Autowired
 	private IClaseRepository repoClases;
-	
 
 	@Override
 	public List<ClaseDTO> buscarTodos() {
 		List<Object[]> resultados = repoClases.obtenerClases();
 
-		return resultados.stream().map(r -> new ClaseDTO(((Number) r[0]).intValue(), 
-				(String) r[1], 
-				(String) r[2], 
-				(String) r[3], 
-				(Date) r[4]
-		)).toList();
+		return resultados.stream().map(
+				r -> new ClaseDTO(((Number) r[0]).intValue(), (String) r[1], (String) r[2], (String) r[3], (Date) r[4]))
+				.toList();
 	}
 
 	@Override
@@ -54,6 +50,13 @@ public class ClaseService implements IClaseService {
 
 	}
 
+	@Override
+	public List<ClaseDTO> buscarPorId(Integer user) {
+		List<Object[]> resultados = repoClases.obtenerClasesPorUsuario(user);
 
+		return resultados.stream().map(
+				r -> new ClaseDTO(((Number) r[0]).intValue(), (String) r[1], (String) r[2], (String) r[3], (Date) r[4]))
+				.toList();
+	}
 
 }

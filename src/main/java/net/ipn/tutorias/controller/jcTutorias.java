@@ -25,18 +25,14 @@ import net.ipn.tutorias.service.db.UsuarioService;
 @RequestMapping("/tutorias")
 public class jcTutorias {
 
-	@Autowired
-	private final UsuarioService usuarioService;
 
 	@Autowired
 	private IClaseService serviceClases;
-	
+
 	@Autowired
 	private IClaseUsuarioService serviceClaseUsuario;
 
-	jcTutorias(UsuarioService usuarioService) {
-		this.usuarioService = usuarioService;
-	}
+
 
 	@GetMapping("/")
 	public String mostrarTutorias(Model modelo) {
@@ -51,6 +47,19 @@ public class jcTutorias {
 				"En esta sección podrás gestionar a los especialistas que brindan apoyo académico dentro de la plataforma. Aquí podrás consultar su área de conocimiento, disponibilidad, materias que imparten y los alumnos que tienen asignados. Esta vista facilita la organización del personal docente y garantiza que cada estudiante reciba el acompañamiento adecuado por parte del tutor más apto.");
 		modelo.addAttribute("titulo_tabla", "Listado de Tutores");
 		return "/tutorias/lista";
+	}
+
+	@GetMapping("/misclases")
+	public String mostrarMisClases(Model modelo, HttpSession session) {
+		CUsuario u = (CUsuario) session.getAttribute("usuario");
+		
+		modelo.addAttribute("titulo", "Mis Clases");
+		modelo.addAttribute("clases", serviceClases.buscarPorId(u.getId()));
+		modelo.addAttribute("descripcion",
+				"En esta sección podrás gestionar y consultar de manera organizada tus tutorías inscritas. Aquí encontrarás información clave sobre cada tutoría, como los estudiantes a tu cargo, fechas programadas, estado de las sesiones y avances registrados. Esta vista facilita el seguimiento y la planificación de tus tutorías, permitiendo una gestión más eficiente y un acompañamiento personalizado para cada alumno.");
+		modelo.addAttribute("titulo_tabla", "Mis Tutorias");
+		return "/tutorias/lista";
+
 	}
 
 	@GetMapping("/alumnos")
