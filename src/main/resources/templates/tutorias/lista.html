@@ -21,7 +21,7 @@
             ">
                 <thead style="background: #f0f0f0;">
                     <tr>
-                        <th style="padding: 14px; text-align: left;">ID</th>
+                        <!-- th style="padding: 14px; text-align: left;">ID</th-->
                         <th style="padding: 14px; text-align: left;">Titulo</th>
                         <th style="padding: 14px; text-align: left;">Descripción</th>
                         <th style="padding: 14px; text-align: left;">Tutor Asignado</th>
@@ -31,7 +31,7 @@
 
                 <tbody>
                     <tr th:each="c : ${clases}">
-                        <td style="padding: 12px;" th:text="${c.id}"></td>
+                        <!--td style="padding: 12px;" th:text="${c.id}"></td-->
                         <td style="padding: 12px;" th:text="${c.titulo}"></td>
                         <td style="padding: 12px;" th:utext="${c.descripcion}"></td>
                         <td style="padding: 12px;" th:text="${c.usuario}"></td>
@@ -50,5 +50,5 @@
     </div>
 </div>
 
-<div class="gradient-band"></div>
+
 <div th:replace="fragmentos/bottom :: bottom"></div>

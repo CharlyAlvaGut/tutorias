@@ -127,7 +127,7 @@ public class jcTutorias {
 	@GetMapping("/eliminar/{id}")
 	public String eliminarTutoria(@PathVariable("id") int id, RedirectAttributes atributos) {
 		serviceClases.eliminarClase(id);
-		atributos.addFlashAttribute("mensaje", "La Tutoría ha sido eliminada con éxito!! :D");
+		atributos.addFlashAttribute("mensaje", "La Tutoría ha sido eliminada con éxito!!");
 		return "redirect:/tutorias/";
 	}
 
@@ -135,7 +135,7 @@ public class jcTutorias {
 	public String editarTutoria(@PathVariable("id") Integer id, Model model, RedirectAttributes atributos) {
 		CClase clase = serviceClases.obtenerPorId(id);
 		model.addAttribute("CClase", clase);
-		atributos.addFlashAttribute("mensaje", "La Tutoría ha sido modfificada con éxito!! :D");
+		atributos.addFlashAttribute("mensaje", "La Tutoría ha sido modfificada con éxito!!");
 		return "tutorias/form";
 	}
 
