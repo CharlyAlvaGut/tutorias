@@ -3,11 +3,58 @@
 <section class="hero" id="inicio">
 	<h1>FlowDocs</h1>
 	<p>
-		FlowDocs es una herramienta diseñada para facilitar la gestión y organización de documentos académicos. Aquí
-		podrás almacenar, compartir y colaborar en archivos con otros estudiantes y tutores, manteniendo todo tu
-		material de estudio en un solo lugar.
+		En este apartado encontrarás las ultimas noticias y actualizaciones de las clases en las que te encuentras inscrito, podras compartir información y documentos.
 	</p>
+	<br>
+	<div class="col-12">
+		<a type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close">Nuevo aviso</a>
+	</div>
+	<br>
+	
+	<div th:if="${mensaje != null}" class="alert alert-success" role="alert" th:text="${mensaje}"></div>
+	
 </section>
 
 <div class="gradient-band"></div>
+
+<!-- Modal del detalle de la tutoria -->
+<div class="modal fade bd-example-modal-lg" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTitulo">Publicar</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form enctype='multipart/form-data' method='POST' th:action="@{/flowdocs/save}">
+				<div class="modal-body">
+					<div id="modalDescripcion">
+						<textarea class="form-control col-12" name="publicacion" id="publicacion" rows="7"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="d-flex w-100">
+						<div class="me-auto p-2">
+							<input class="form-control" name="documento" id="documento" type="file" multiple>
+						</div>
+						<div class="p-2">
+							<button type="submit" class="btn btn-dark" data-bs-dismiss="modal">
+								Publicar
+							</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+	tinymce.init({
+		selector: '#publicacion',
+		plugins: "textcolor, table lists code",
+		toolbar: " undo redo | bold italic | alignleft aligncenter alignright alignjustify \n\
+	    | bullist numlist outdent indent | forecolor backcolor table code"
+	});
+</script>
+
 <div th:replace="fragmentos/bottom :: bottom"></div>

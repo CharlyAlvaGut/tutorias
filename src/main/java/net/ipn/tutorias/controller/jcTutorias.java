@@ -19,7 +19,6 @@ import net.ipn.tutorias.model.CClase;
 import net.ipn.tutorias.model.CUsuario;
 import net.ipn.tutorias.service.IClaseService;
 import net.ipn.tutorias.service.IClaseUsuarioService;
-import net.ipn.tutorias.service.db.UsuarioService;
 
 @Controller
 @RequestMapping("/tutorias")
