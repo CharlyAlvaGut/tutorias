@@ -8,6 +8,7 @@ import net.ipn.tutorias.model.CClase;
 public interface IClaseService {
 	List<ClaseDTO> buscarTodos();
 	List<ClaseDTO> buscarPorId(Integer user);
+	List<ClaseDTO> buscarCreadas(Integer user);
 	
 	CClase obtenerPorId(int id);
 	void guardar(CClase clase);

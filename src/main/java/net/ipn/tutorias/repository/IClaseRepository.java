@@ -24,17 +24,30 @@ public interface IClaseRepository extends JpaRepository<CClase, Integer> {
 	List<Object[]> obtenerClases();
 
 	@Query(value = """
-		    SELECT
-		        a.id,
-		        a.titulo,
-		        a.descripcion,
-		        CONCAT(b.nombre, ' ', b.apellidop, ' ', b.apellidom) AS usuario,
-		        a.fecha
+			   SELECT
+			       a.id,
+			       a.titulo,
+			       a.descripcion,
+			       CONCAT(b.nombre, ' ', b.apellidop, ' ', b.apellidom) AS usuario,
+			       a.fecha
 			FROM clases a
 			INNER JOIN usuarios b ON a.idUsuario = b.id
 			INNER JOIN claseusuarios c ON a.id = c.idClase
 			WHERE c.idUsuario = :idUser
 							""", nativeQuery = true)
 	List<Object[]> obtenerClasesPorUsuario(@Param("idUser") Integer user);
+
+	@Query(value = """
+		   SELECT
+				a.id,
+				a.titulo,
+				a.descripcion,
+				CONCAT(b.nombre, ' ', b.apellidop, ' ', b.apellidom) AS usuario,
+				a.fecha
+			FROM clases a
+			INNER JOIN usuarios b ON a.idUsuario = b.id
+			WHERE a.idUsuario = :idUser
+										""", nativeQuery = true)
+	List<Object[]> obtenerClasesCreadas(@Param("idUser") Integer user);
 
 }

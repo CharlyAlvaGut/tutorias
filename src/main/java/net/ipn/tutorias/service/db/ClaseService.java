@@ -59,4 +59,13 @@ public class ClaseService implements IClaseService {
 				.toList();
 	}
 
+	@Override
+	public List<ClaseDTO> buscarCreadas(Integer user) {
+		List<Object[]> resultados = repoClases.obtenerClasesCreadas(user);
+
+		return resultados.stream().map(
+				r -> new ClaseDTO(((Number) r[0]).intValue(), (String) r[1], (String) r[2], (String) r[3], (Date) r[4]))
+				.toList();
+	}
+
 }

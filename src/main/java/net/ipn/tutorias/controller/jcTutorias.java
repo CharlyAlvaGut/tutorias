@@ -1,6 +1,7 @@
 package net.ipn.tutorias.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
+import net.ipn.tutorias.dto.ClaseDTO;
 import net.ipn.tutorias.model.CClase;
 import net.ipn.tutorias.model.CUsuario;
 import net.ipn.tutorias.service.IClaseService;
@@ -24,14 +26,11 @@ import net.ipn.tutorias.service.IClaseUsuarioService;
 @RequestMapping("/tutorias")
 public class jcTutorias {
 
-
 	@Autowired
 	private IClaseService serviceClases;
 
 	@Autowired
 	private IClaseUsuarioService serviceClaseUsuario;
-
-
 
 	@GetMapping("/")
 	public String mostrarTutorias(Model modelo) {
@@ -51,12 +50,29 @@ public class jcTutorias {
 	@GetMapping("/misclases")
 	public String mostrarMisClases(Model modelo, HttpSession session) {
 		CUsuario u = (CUsuario) session.getAttribute("usuario");
-		
-		modelo.addAttribute("titulo", "Mis Clases");
-		modelo.addAttribute("clases", serviceClases.buscarPorId(u.getId()));
-		modelo.addAttribute("descripcion",
-				"En esta sección podrás gestionar y consultar de manera organizada tus tutorías inscritas. Aquí encontrarás información clave sobre cada tutoría, como los estudiantes a tu cargo, fechas programadas, estado de las sesiones y avances registrados. Esta vista facilita el seguimiento y la planificación de tus tutorías, permitiendo una gestión más eficiente y un acompañamiento personalizado para cada alumno.");
-		modelo.addAttribute("titulo_tabla", "Mis Tutorias");
+		List<ClaseDTO> clases = null;
+		String titulo = "", descripcion = "", titulo_tabla = "";
+		boolean encabezado = false;
+
+		if (u.getIdRol() == 2) { // Tutor
+			titulo = "Mis clases creadas";
+			descripcion = "En esta sección podrás gestionar y consultar de manera organizada tus tutorías creadas. Aquí encontrarás información clave sobre cada tutoría, como los estudiantes a tu cargo, fechas programadas, estado de las sesiones y avances registrados. Esta vista facilita el seguimiento y la planificación de tus tutorías, permitiendo una gestión más eficiente y un acompañamiento personalizado para cada alumno.";
+			titulo_tabla = "Tutorias creadas";
+			clases = serviceClases.buscarCreadas(u.getId());
+
+		} else if (u.getIdRol() == 3) { // Alumno
+			titulo = "Mis clases inscritas";
+			descripcion = "En esta sección podrás consultar y gestionar de manera organizada tus tutorías inscritas. Aquí encontrarás información clave sobre cada tutoría, como el tutor asignado, fechas programadas, estado de las sesiones y avances registrados. Esta vista te facilita el seguimiento de tu proceso de aprendizaje y la planificación de tus tutorías, permitiéndote aprovechar al máximo el acompañamiento y resolver tus dudas de forma oportuna.";
+			titulo_tabla = "Tutorias inscritas";
+			clases = serviceClases.buscarPorId(u.getId());
+			encabezado = true;
+		}
+
+		modelo.addAttribute("titulo", titulo);
+		modelo.addAttribute("clases", clases);
+		modelo.addAttribute("descripcion", descripcion);
+		modelo.addAttribute("titulo_tabla", titulo_tabla);
+		modelo.addAttribute("mostrar", encabezado);
 		return "/tutorias/lista";
 
 	}
