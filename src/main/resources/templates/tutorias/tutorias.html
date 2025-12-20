@@ -32,12 +32,12 @@
 						<i class="fa-solid fa-circle-info"></i>
 					</a>
 
-					<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor')" title="Editar tutoria"
+					<a sec:authorize="hasAnyAuthority('Administrador')" title="Editar tutoria"
 						th:href="@{/tutorias/editar/{id}(id=${clase.id})}" class="btn btn-outline-dark btn-sm">
 						<i class="fa-solid fa-pen-to-square"></i>
 					</a>
 
-					<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor')" title="Eliminar tutoria"
+					<a sec:authorize="hasAnyAuthority('Administrador')" title="Eliminar tutoria"
 						href="javascript:void(0);" th:onclick="'confirmarEliminacion(' + ${clase.id} + ')'"
 						class="btn btn-outline-dark btn-sm">
 						<i class="fa-solid fa-trash"></i>

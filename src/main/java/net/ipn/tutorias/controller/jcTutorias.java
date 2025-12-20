@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +19,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import net.ipn.tutorias.dto.ClaseDTO;
+import net.ipn.tutorias.dto.UsuarioDTO;
 import net.ipn.tutorias.model.CClase;
 import net.ipn.tutorias.model.CUsuario;
 import net.ipn.tutorias.service.IClaseService;
 import net.ipn.tutorias.service.IClaseUsuarioService;
+import net.ipn.tutorias.service.IUsuarioService;
 
 @Controller
 @RequestMapping("/tutorias")
@@ -28,6 +32,9 @@ public class jcTutorias {
 
 	@Autowired
 	private IClaseService serviceClases;
+
+	@Autowired
+	private IUsuarioService serviceUsuarios;
 
 	@Autowired
 	private IClaseUsuarioService serviceClaseUsuario;
@@ -119,6 +126,12 @@ public class jcTutorias {
 		return serviceClases.obtenerPorId(id);
 	}
 
+	@GetMapping("/{id}/alumnos")
+	@ResponseBody
+	public List<UsuarioDTO> obtenerAlumnos(@PathVariable Integer id) {
+		return serviceUsuarios.obtenerPorClase(id);
+	}
+
 	@GetMapping("/registro/{idClase}/{idAlumno}")
 	public String inscribirTutoria(@PathVariable("idClase") int idClase, @PathVariable("idAlumno") int idAlumno,
 			HttpSession session, RedirectAttributes atributos) {
@@ -137,6 +150,19 @@ public class jcTutorias {
 				inscrito ? "¡Se registró correctamente!" : "Ya estabas inscrito en esta tutoría.");
 
 		return "redirect:/tutorias/";
+	}
+
+	@DeleteMapping("/{idClase}/alumnos/{idUsuario}")
+	@ResponseBody
+	public ResponseEntity<Void> eliminarAlumno(@PathVariable Integer idClase, @PathVariable Integer idUsuario) {
+
+		boolean eliminado = serviceClaseUsuario.eliminar(idClase, idUsuario);
+
+		if (!eliminado) {
+			return ResponseEntity.notFound().build(); // 404
+		}
+
+		return ResponseEntity.ok().build(); // 200
 	}
 
 	@GetMapping("/eliminar/{id}")

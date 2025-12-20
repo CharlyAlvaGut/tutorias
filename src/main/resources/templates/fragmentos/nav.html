@@ -15,7 +15,7 @@
 
 	<div class="nav-actions">
 		<a sec:authorize="isAuthenticated()" class="btn-ghost" th:href="@{/registro}">Registrarse</a>
-		<a sec:authorize="isAnonymous()" class="btn-ghost" th:href="@{/login}">Iniciar sesión</a>
+		<a sec:authorize="isAnonymous()" class="btn-pill" th:href="@{/login}">Iniciar sesión</a>
 		<a sec:authorize="isAuthenticated()" class="btn-pill" th:href="@{/logout}">Cerrar Sesión</a>
 	</div>
 </header>

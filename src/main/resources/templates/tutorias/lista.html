@@ -1,17 +1,17 @@
 <div th:replace="fragmentos/top :: top"></div>
 
 <section class="hero" id="inicio">
-    <h1 th:text="${titulo}"></h1>
-    <p th:text="${descripcion}"></p>
+	<h1 th:text="${titulo}"></h1>
+	<p th:text="${descripcion}"></p>
 </section>
 
 <div class="main-shell">
-    <div class="main-card">
+	<div class="main-card">
 
-        <section class="table-section" style="padding: 40px;">
-            <h2 style="margin-bottom: 20px; font-size: 1.6rem;" th:text="${titulo_tabla}"></h2>
+		<section class="table-section" style="padding: 40px;">
+			<h2 style="margin-bottom: 20px; font-size: 1.6rem;" th:text="${titulo_tabla}"></h2>
 
-            <table style="
+			<table style="
                 width: 100%;
                 border-collapse: collapse;
                 background: #fff;
@@ -19,34 +19,218 @@
                 overflow: hidden;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             ">
-                <thead style="background: #f0f0f0;">
-                    <tr>
-                        <th style="padding: 14px; text-align: left;">Titulo</th>
-                        <th style="padding: 14px; text-align: left;">Descripción</th>
-                        <th th:if="${mostrar}" style="padding: 14px; text-align: left;">Tutor Asignado</th>
-                        <th style="padding: 14px; text-align: center;">Acciones</th>
-                    </tr>
-                </thead>
+				<thead style="background: #f0f0f0;">
+					<tr>
+						<th style="padding: 14px; text-align: left;">Titulo</th>
+						<th style="padding: 14px; text-align: left;">Descripción</th>
+						<th th:if="${mostrar}" style="padding: 14px; text-align: left;">Tutor Asignado</th>
+						<th style="padding: 14px; text-align: center;">Acciones</th>
+					</tr>
+				</thead>
 
-                <tbody>
-                    <tr th:each="c : ${clases}">
-                        <td style="padding: 12px;" th:text="${c.titulo}"></td>
-                        <td style="padding: 12px;" th:utext="${#strings.abbreviate(c.descripcion, 20)}"></td>
-                        <td th:if="${mostrar}" style="padding: 12px;" th:text="${c.usuario}"></td>
+				<tbody>
+					<tr th:each="c : ${clases}">
+						<td style="padding: 12px;" th:text="${c.titulo}"></td>
+						<td style="padding: 12px;" th:utext="${#strings.abbreviate(c.descripcion, 20)}"></td>
+						<td th:if="${mostrar}" style="padding: 12px;" th:text="${c.usuario}"></td>
 
-                        <td style="padding: 12px; text-align: center;">
-                            <a href="#" 
-                               style="text-decoration:none; color:#000; font-weight:600;">
-                                Ver
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+						<td style="padding: 12px; text-align: center;">
 
-    </div>
+							<a sec:authorize="hasAnyAuthority('Tutor', 'Alumno')" title="Ver tablón" href="#"
+								class="btn btn-outline-dark btn-sm">
+								<i class="fa-solid fa-house-chimney-user"></i>
+							</a>
+
+							<a href="#" class="btn btn-outline-dark btn-sm" title="Alumnos inscritos"
+								sec:authorize="hasAnyAuthority('Tutor')" data-bs-toggle="modal"
+								data-bs-target="#exampleModal" th:onclick="|cargarAlumnos(${c.id})|">
+								<i class="fa-solid fa-people-group"></i>
+							</a>
+
+
+
+							<a sec:authorize="hasAnyAuthority('Tutor')" title="Editar tutoria"
+								th:href="@{/tutorias/editar/{id}(id=${c.id})}" class="btn btn-outline-dark btn-sm">
+								<i class="fa-solid fa-pen-to-square"></i>
+							</a>
+
+							<a sec:authorize="hasAnyAuthority('Tutor')" title="Eliminar tutoria"
+								href="javascript:void(0);" th:onclick="'confirmarEliminacion(' + ${c.id} + ')'"
+								class="btn btn-outline-dark btn-sm">
+								<i class="fa-solid fa-trash"></i>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+	</div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Alumnos inscritos</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body">
+				<table class="table table-striped table-sm" id="tablaAlumnos">
+					<thead>
+						<tr>
+							<th>Nombre</th>
+							<th>Correo</th>
+							<th>Acción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td colspan="3">Seleccione una tutoría</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+
+	let idTutoriaActual = null;
+
+	$(function () {
+
+
+	});
+
+
+	function cargarAlumnos(idTutoria) {
+		idTutoriaActual = idTutoria;
+
+		let tbody = $("#tablaAlumnos tbody");
+		tbody.html("<tr><td colspan='3'>Cargando...</td></tr>");
+
+		$.ajax({
+			url: "/aulax/tutorias/" + idTutoria + "/alumnos",
+			type: "GET",
+			dataType: "json",
+			success: function (alumnos) {
+				tbody.empty();
+
+				if (alumnos.length === 0) {
+					tbody.append(
+						"<tr><td colspan='3'>No hay alumnos inscritos</td></tr>"
+					);
+					return;
+				}
+
+				$.each(alumnos, function (i, alumno) {
+					tbody.append(`
+						<tr>
+							<td>${alumno.nombre}</td>
+							<td>${alumno.correo}</td>
+							<td>
+								<button class="btn btn-danger btn-sm"
+									onclick="eliminarAlumno(${alumno.id})">
+									Eliminar
+								</button>
+							</td>
+						</tr>
+					`);
+				});
+			},
+			error: function () {
+				tbody.html(
+					"<tr><td colspan='3'>Error al cargar alumnos</td></tr>"
+				);
+			}
+		});
+	}
+
+
+	function confirmarEliminacion(id) {
+		Swal.fire({
+			title: '¿Eliminar tutoría?',
+			text: "Esta acción no se puede deshacer",
+			icon: 'warning',
+			iconColor: '#000',
+			background: '#fff',
+			showCancelButton: true,
+			confirmButtonText: 'Sí, eliminar',
+			cancelButtonText: 'Cancelar',
+
+			buttonsStyling: false,
+			customClass: {
+				confirmButton: 'btn btn-dark mx-2',
+				cancelButton: 'btn btn-light border mx-2'
+			}
+
+		}).then((result) => {
+			if (result.isConfirmed) {
+				window.location.href = '/aulax/tutorias/eliminar/' + id;
+			}
+		});
+	}
+
+
+	function eliminarAlumno(idAlumno) {
+
+		Swal.fire({
+			title: '¿Eliminar alumno?',
+			text: 'Se quitará de la tutoría',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Sí, eliminar',
+			cancelButtonText: 'Cancelar',
+			buttonsStyling: false,
+			customClass: {
+				confirmButton: 'btn btn-dark mx-2',
+				cancelButton: 'btn btn-light border mx-2'
+			}
+		}).then((result) => {
+
+			if (result.isConfirmed) {
+
+				$.ajax({
+					url: "/aulax/tutorias/" + idTutoriaActual + "/alumnos/" + idAlumno,
+					type: "DELETE",
+					success: function () {
+
+						Swal.fire({
+							icon: 'success',
+							title: 'Eliminado',
+							text: 'El alumno fue eliminado correctamente',
+							timer: 1500,
+							showConfirmButton: false
+						});
+
+						// Recargar la tabla
+						cargarAlumnos(idTutoriaActual);
+					},
+					error: function () {
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: 'No se pudo eliminar el alumno'
+						});
+					}
+				});
+			}
+		});
+	}
+
+
+
+
+
+</script>
 
 <div th:replace="fragmentos/bottom :: bottom"></div>
