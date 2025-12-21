@@ -40,8 +40,9 @@ public class jcTutorias {
 	private IClaseUsuarioService serviceClaseUsuario;
 
 	@GetMapping("/")
-	public String mostrarTutorias(Model modelo) {
-		modelo.addAttribute("clases", serviceClases.buscarTodos());
+	public String mostrarTutorias(Model modelo, HttpSession session) {
+		CUsuario u = (CUsuario) session.getAttribute("usuario");
+		modelo.addAttribute("clases", serviceClases.buscarTodos(u.getId()));
 		return "/tutorias/tutorias";
 	}
 

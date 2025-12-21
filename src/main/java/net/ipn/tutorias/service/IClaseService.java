@@ -6,7 +6,7 @@ import net.ipn.tutorias.dto.ClaseDTO;
 import net.ipn.tutorias.model.CClase;
 
 public interface IClaseService {
-	List<ClaseDTO> buscarTodos();
+	List<ClaseDTO> buscarTodos(Integer user);
 	List<ClaseDTO> buscarPorId(Integer user);
 	List<ClaseDTO> buscarCreadas(Integer user);
 	

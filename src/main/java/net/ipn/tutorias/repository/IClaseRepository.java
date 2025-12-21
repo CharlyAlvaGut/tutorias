@@ -11,17 +11,21 @@ import net.ipn.tutorias.model.CClase;
 public interface IClaseRepository extends JpaRepository<CClase, Integer> {
 
 	@Query(value = """
-				    SELECT
-				        a.id,
-				        a.titulo,
-				        a.descripcion,
-				        CONCAT(b.nombre, ' ', b.apellidop, ' ', b.apellidom) AS usuario,
-				        a.fecha
-				    FROM clases a
-				    JOIN usuarios b ON a.idUsuario = b.id
-				    WHERE a.estatus = 1
-			""", nativeQuery = true)
-	List<Object[]> obtenerClases();
+    			SELECT
+			    a.id,
+			    a.titulo,
+			    a.descripcion,
+			    CONCAT(b.nombre, ' ', b.apellidop, ' ', b.apellidom) AS usuario,
+			    a.fecha
+			FROM clases a
+			INNER JOIN usuarios b ON a.idUsuario = b.id
+			LEFT JOIN claseusuarios c
+			    ON a.id = c.idClase
+			    AND c.idUsuario = :idUser
+			WHERE c.idUsuario IS NULL;
+
+						""", nativeQuery = true)
+	List<Object[]> obtenerClases(@Param("idUser") Integer user);
 
 	@Query(value = """
 			   SELECT
@@ -38,7 +42,7 @@ public interface IClaseRepository extends JpaRepository<CClase, Integer> {
 	List<Object[]> obtenerClasesPorUsuario(@Param("idUser") Integer user);
 
 	@Query(value = """
-		   SELECT
+			  SELECT
 				a.id,
 				a.titulo,
 				a.descripcion,

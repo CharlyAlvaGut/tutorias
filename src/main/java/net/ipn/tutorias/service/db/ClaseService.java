@@ -21,8 +21,8 @@ public class ClaseService implements IClaseService {
 	private IClaseRepository repoClases;
 
 	@Override
-	public List<ClaseDTO> buscarTodos() {
-		List<Object[]> resultados = repoClases.obtenerClases();
+	public List<ClaseDTO> buscarTodos(Integer user) {
+		List<Object[]> resultados = repoClases.obtenerClases(user);
 
 		return resultados.stream().map(
 				r -> new ClaseDTO(((Number) r[0]).intValue(), (String) r[1], (String) r[2], (String) r[3], (Date) r[4]))
