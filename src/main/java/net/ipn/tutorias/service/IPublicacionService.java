@@ -7,5 +7,5 @@ import net.ipn.tutorias.model.CPublicacion;
 
 public interface IPublicacionService {
 	CPublicacion guardar(CPublicacion publicacion);
-	List<PublicacionDTO> buscarTodos();
+	public List<PublicacionDTO> buscarPublicacionesPorClase(Integer clase);
 }

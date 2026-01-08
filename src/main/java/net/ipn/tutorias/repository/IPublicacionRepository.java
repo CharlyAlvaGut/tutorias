@@ -12,14 +12,15 @@ public interface IPublicacionRepository extends JpaRepository<CPublicacion, Inte
 	
 	@Query(value = """
 		    SELECT 
-			   CONCAT(b.nombre,' ',b.apellidop,' ',b.apellidom) AS nombre,
+        a.id,
 			   a.descripcion,
+         CONCAT(b.nombre,' ',b.apellidop,' ',b.apellidom) AS usuario,
 			   a.fecha,
 			   GROUP_CONCAT(c.id ORDER BY c.id SEPARATOR ',') AS documentos
 			FROM publicaciones a
 			INNER JOIN usuarios b ON a.idUsuario = b.id
 			LEFT JOIN documentos c ON c.idPublicacion = a.id
-			WHERE a.idClase = :idClase GROUP BY a.id
+			WHERE a.idClase = :idClase  GROUP BY a.id ORDER BY a.fecha DESC
 	""", nativeQuery = true)
 	List<Object[]> obtenerPublicaciones(@Param("idClase") Integer clase);
 }

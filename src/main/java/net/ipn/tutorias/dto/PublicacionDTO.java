@@ -7,10 +7,10 @@ public class PublicacionDTO {
 	private String descripcion;
 	private String usuario;
 	private Date fecha;
-	private Integer[] documentos;
+	private String documentos;
 	
 	
-	public PublicacionDTO(Integer id, String descripcion, String usuario, Date fecha, Integer[] documentos) {
+	public PublicacionDTO(Integer id, String descripcion, String usuario, Date fecha, String documentos) {
 		super();
 		this.id = id;
 		this.descripcion = descripcion;
@@ -43,10 +43,10 @@ public class PublicacionDTO {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	public Integer[] getDocumentos() {
+	public String getDocumentos() {
 		return documentos;
 	}
-	public void setDocumentos(Integer[] documentos) {
+	public void setDocumentos(String documentos) {
 		this.documentos = documentos;
 	}
 }

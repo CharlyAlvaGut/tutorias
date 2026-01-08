@@ -36,7 +36,7 @@
 
 						<td style="padding: 12px; text-align: center;">
 
-							<a sec:authorize="hasAnyAuthority('Tutor', 'Alumno')" title="Ver tablón" href="#"
+							<a sec:authorize="hasAnyAuthority('Tutor', 'Alumno')" title="Ver tablón" th:href="@{/flowdocs/{id}(id=${c.id})}"
 								class="btn btn-outline-dark btn-sm">
 								<i class="fa-solid fa-house-chimney-user"></i>
 							</a>

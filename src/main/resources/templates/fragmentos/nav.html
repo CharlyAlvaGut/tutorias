@@ -10,7 +10,6 @@
 	<nav class="nav-links">
 		<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor', 'Alumno')" th:href="@{/tutorias/}">Tutorías</a>
 		<a sec:authorize="hasAnyAuthority('Alumno', 'Tutor')" th:href="@{/tutorias/misclases}">Mis clases</a>
-		<a sec:authorize="hasAnyAuthority('Administrador', 'Tutor', 'Alumno')" th:href="@{/flowdocs/}">FlowDocs</a>
 	</nav>
 
 	<div class="nav-actions">

@@ -3,24 +3,29 @@
 <section class="hero" id="inicio">
 	<h1>FlowDocs</h1>
 	<p>
-		En este apartado encontrarás las ultimas noticias y actualizaciones de las clases en las que te encuentras inscrito, podras compartir información y documentos.
+		En este apartado encontrarás las ultimas noticias y actualizaciones de las clases en las que te encuentras
+		inscrito, podras compartir información y documentos.
 	</p>
 	<br>
 	<div class="col-12">
-		<a type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close">Nuevo aviso</a>
+		<button class="btn btn-dark" onclick="mostrar(0)">Nuevo</button>
 	</div>
 	<br>
-	
+
+	<input type="hidden" id="rolUsuario" th:value="${#authentication.authorities}">
+
 	<div th:if="${mensaje != null}" class="alert alert-success" role="alert" th:text="${mensaje}"></div>
-	
+
 </section>
 
-<div class="gradient-band"></div>
+<div class="list-group list-group-flush border-start border-3 ps-3" id="tablon"></div>
 
 <!-- Modal del detalle de la tutoria -->
-<div class="modal fade bd-example-modal-lg" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
 	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
+
+		<div class="modal-content" id="formulario">
 			<div class="modal-header">
 				<h5 class="modal-title" id="modalTitulo">Publicar</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -36,6 +41,7 @@
 						<div class="me-auto p-2">
 							<input class="form-control" name="documento" id="documento" type="file" multiple>
 						</div>
+						<input type="hidden" name="idClase" id="idClase" th:value="${id}">
 						<div class="p-2">
 							<button type="submit" class="btn btn-dark" data-bs-dismiss="modal">
 								Publicar
@@ -45,16 +51,209 @@
 				</div>
 			</form>
 		</div>
+
+
+		<div class="modal-content" id="documentos">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTitulo">Documentos de la publicación</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div id="contenedorDocumentos"></div>
+			</div>
+			<div class="modal-footer">
+
+			</div>
+		</div>
+
+
 	</div>
 </div>
 
 <script>
-	tinymce.init({
-		selector: '#publicacion',
-		plugins: "textcolor, table lists code",
-		toolbar: " undo redo | bold italic | alignleft aligncenter alignright alignjustify \n\
-	    | bullist numlist outdent indent | forecolor backcolor table code"
+	$(document).ready(function () {
+		tinymce.init({
+			selector: '#publicacion',
+			plugins: "textcolor, table lists code",
+			toolbar: " undo redo | bold italic | alignleft aligncenter alignright alignjustify \n\
+		    | bullist numlist outdent indent | forecolor backcolor table code"
+		});
+
+		const idClase = $('#idClase').val();
+
+		function cargarTablon() {
+			$.get(idClase + '/tablon', function (response) {
+				let html = '';
+				response.forEach(publi => {
+					html += `
+		                <div class="list-group-item py-4">
+		                    <div class="d-flex justify-content-between">
+		                        <div>
+		                            <p class="mb-1 text-muted small">` +
+						publi.descripcion +
+						`</p>
+		                            <small class="text-muted">
+		                                Publicado el: ` + formatearFecha(publi.fecha) + ` Por: ` + publi.usuario +
+						`</small>
+		                        </div>` +
+						(publi.documentos == null ? `` : `<div class="text-end">
+									<button class="btn btn-primary" onclick="mostrar(` + publi.id + `)">Ver documento...</button>
+								</div>` ) +
+						`</div>
+		                </div>
+		            `;
+				});
+				$('#tablon').html(html);
+			});
+		}
+
+		// Carga inicial
+		cargarTablon();
+
+		// Repetir cada 5 segundos
+		let intervalo = setInterval(cargarTablon, 10000);
 	});
+
+	function formatearFecha(fecha) {
+		const fechaMod = new Date(fecha);
+		return fechaMod.toLocaleDateString('es-MX') + ' ' +
+			fechaMod.toLocaleTimeString('es-MX');
+	}
+
+	function mostrar(id) {
+		const modal = new bootstrap.Modal(
+			document.getElementById('modal')
+		);
+		if (id == 0) { //Menu de nueva publicacion
+			$('#documentos').hide();
+			$('#formulario').show();
+		} else { //Menu de documentos
+			$('#documentos').show();
+			$('#formulario').hide();
+
+			const rolUsuario = $('#rolUsuario').val().includes('Tutor');
+
+			$.get(id + '/documentos', function (documentos) {
+
+				let html = '<ul class="list-group list-group-flush">';
+
+				documentos.forEach(doc => {
+					html += `
+					<li class="list-group-item">
+
+					            <div class="d-flex justify-content-between align-items-center">
+
+					                <!-- Nombre -->
+					                <span>${doc.nombre}</span>
+
+					                <!-- Acciones -->
+					                <div class="d-flex gap-2">
+
+					                    <!-- Descargar -->
+					                    <button class="btn btn-sm btn-outline-primary"
+					                            onclick="descargar(${doc.id})">
+					                        Descargar
+					                    </button>
+
+					                    <!-- Split button -->
+					                    <div class="btn-group dropup">
+
+					                        <!-- Collapse -->
+					                        <button class="btn btn-sm btn-outline-secondary"
+					                                data-bs-toggle="collapse"
+					                                data-bs-target="#infoDoc${doc.id}" onclick="mostrarFlujo(${doc.id})">
+					                            Detalles
+					                        </button>
+
+					                        <!-- Dropdown -->
+											` + (rolUsuario ? `<button class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+																                                data-bs-toggle="dropdown"></button>` : ``) + `
+
+					                        <ul class="dropdown-menu">
+					                            <li>
+					                                <a class="dropdown-item" href="#"
+					                                   onclick="accionExtra(${doc.id},1)">
+					                                   Cambiar estatus a Revisión
+					                                </a>
+													<a class="dropdown-item" href="#"
+					                                   onclick="accionExtra(${doc.id},2)">
+					                                   Cambiar estatus a Aprobado
+					                                </a>
+													<a class="dropdown-item" href="#"
+					                                   onclick="accionExtra(${doc.id},3)">
+					                                   Cambiar estatus a reprobado
+					                                </a>
+					                            </li>
+					                        </ul>
+					                    </div>
+
+					                </div>
+					            </div>
+
+					            <!-- COLLAPSE -->
+					            <div class="collapse mt-2" id="infoDoc${doc.id}">
+					                <div class="border rounded p-3 small text-muted" id="flujo${doc.id}">
+					                </div>
+					            </div>
+
+					        </li>
+			        `;
+				});
+
+				html += '</ul>';
+
+				$('#contenedorDocumentos').html(html);
+			});
+		}
+		modal.show();
+	}
+
+	function descargar(id) {
+		$.ajax({
+			url: id + '/descargar',
+			method: 'GET',
+			xhrFields: {
+				responseType: 'blob'
+			},
+			success: function (blob, status, xhr) {
+
+				let nombre = 'archivo';
+				let header = xhr.getResponseHeader('Content-Disposition');
+
+				if (header && header.includes('filename=')) {
+					nombre = header.split('filename=')[1].replace(/"/g, '');
+				}
+
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = nombre;
+				a.click();
+
+				window.URL.revokeObjectURL(url);
+			}
+		});
+	}
+
+	function accionExtra(idDocumento, idEstatus) {
+		const idClase = $('#idClase').val();
+		$.get(idClase + '/' + idDocumento + '/' + idEstatus +'/saveEstatus', function (response) {
+			console.log(response);
+			});
+	}
+
+	function mostrarFlujo(idDocumento) {
+		$.get(idDocumento + '/mostrar', function (flujo) {
+			let html = '<ul class="list-group list-group-flush">';
+
+				flujo.forEach(fluc => {
+					html += `<li class="list-group">Estatus: ` + fluc.estatus + ` Cambio hecho por: ` + fluc.nombre + `, el ` + formatearFecha(fluc.fecha) + `</li>`;
+					
+			});
+			$('#flujo' + idDocumento).html(html);
+		});
+	}
+		
 </script>
 
 <div th:replace="fragmentos/bottom :: bottom"></div>
